@@ -5,9 +5,9 @@ import webbrowser
 from email.header import decode_header
 
 # creds
-username = 'zabolonkovd4@ptri.unn.ru'
-password = 'Qua*pAD_Scoob'
-imap_server = 'ptri.unn.ru'
+username = 'username'
+password = 'password'
+imap_server = 'server.com'
 
 # creating imap4 class with ssl
 imap = imaplib.IMAP4_SSL(imap_server)
