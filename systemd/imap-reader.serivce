@@ -1,0 +1,11 @@
+[Unit]
+Description=Imap mail reader service
+[Service]
+Type=simple
+ExecStart=/usr/bin/imap-reader
+Restart=always
+TimeoutSec=10
+RestartSec=5
+[Install]
+WantedBy=multi-user.taget
+WantedBy=graphical.target
