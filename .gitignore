@@ -1,3 +1,4 @@
 .idea
 *debug.py
 *.token
+__pycache__/
