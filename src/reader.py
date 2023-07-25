@@ -5,7 +5,6 @@ import os
 import asyncio
 import webbrowser
 from email.header import decode_header
-from repeated_timer import RepeatedTimer
 from imap_message import ImapMessage
 from collections import OrderedDict
 #import client

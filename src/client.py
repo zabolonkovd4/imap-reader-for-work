@@ -1,7 +1,7 @@
 import logging
 from aiogram import Bot, Dispatcher, executor, types
 import aiohttp
-from reader import imap_poll, RepeatedTimer
+from reader import imap_poll
 
 API_TOKEN = '6336392389:AAHD_IHMcHMolY-gCJ45G9mA14g3JLmL-Nk'
 #API_TOKEN = 'TOKEN'
