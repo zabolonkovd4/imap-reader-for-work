@@ -63,9 +63,8 @@ def imap_poll():
                     content_disposition = str(part.get("Content-Disposition"))
                     try:
                         # get the email body
-                        imap_message = ImapMessage()
                         body = part.get_payload(decode=True).decode()
-                        imap_message.content = body
+                        imap_message = ImapMessage(content=body)
                         print(i)
                         print(body)
                     except:
@@ -73,7 +72,7 @@ def imap_poll():
                     if content_type == "text/plain" and "attachment" not in content_disposition:
                         # print text/plain emails and skip attachments
                         # pack imap body message
-                        imap_message.content = body
+                        imap_message = ImapMessage(content=body)
                         #print(body)
                     elif "attachment" in content_disposition:
                         # download attachment
@@ -86,10 +85,9 @@ def imap_poll():
                             filepath = os.path.join(folder_name, filename)
                             # download attachment and save it
                             attachment = part.get_payload(decode=True)
-                            imap_message.attachment = attachment
                             open(filepath, "wb").write(attachment)
+                            imap_message = ImapMessage(content=body, attachment=attachment)
                             # TODO: send file via bot, then remove the file from os
-                            imap_message.content = body
             else:
                 # extract content type of email
                 content_type = msg.get_content_type()
@@ -97,9 +95,7 @@ def imap_poll():
                 body = msg.get_payload(decode=True).decode()
                 if content_type == "text/plain":
                     # print only text email parts
-                    #print(body)
-                    pass
-                imap_message.content = body
+                    imap_message = ImapMessage(content=body)
             if content_type == "text/html":
                 # if it's HTML, create a new HTML file and open it in browser
                 folder_name = clean(subject)
@@ -112,7 +108,7 @@ def imap_poll():
                 open(filepath, "w").write(body)
                 # open in the default browser
                 webbrowser.open(filepath)
-                imap_message.content = body
+                imap_message = ImapMessage(content=body)
                 # TODO: send a file via bot, then delete from os
                 #await client.send_message()
             msgs.add(imap_message)

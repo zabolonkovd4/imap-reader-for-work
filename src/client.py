@@ -2,6 +2,7 @@ import logging
 from aiogram import Bot, Dispatcher, executor, types
 import aiohttp
 from reader import imap_poll
+import asyncio
 
 API_TOKEN = '6336392389:AAHD_IHMcHMolY-gCJ45G9mA14g3JLmL-Nk'
 #API_TOKEN = 'TOKEN'
@@ -28,6 +29,7 @@ async def send_message(message: types.Message):
     for msg in messages:
         print(msg.content)
         await message.reply(msg.content)
+        await asyncio.sleep(0.5)
 
 
 #@dp.message_handler()
