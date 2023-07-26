@@ -7,6 +7,12 @@ import webbrowser
 from email.header import decode_header
 from imap_message import ImapMessage
 
+# logger
+logging.basicConfig(
+    format='%(asctime)s %(levelname)s [%(name)s(%(filename)s:%(lineno)d)] %(message)s',
+    level=logging.DEBUG
+)
+
 # creds
 USERNAME = 'zabolonkovd4@ptri.unn.ru'
 PASSWORD = 'Qua*pAD_Scoob'
@@ -65,15 +71,14 @@ def imap_poll():
                         # get the email body
                         body = part.get_payload(decode=True).decode()
                         imap_message = ImapMessage(content=body)
-                        print(i)
-                        print(body)
+                        logging.info("#{} Message body read: {}".format(i, imap_message.content))
                     except:
                         pass
                     if content_type == "text/plain" and "attachment" not in content_disposition:
                         # print text/plain emails and skip attachments
                         # pack imap body message
                         imap_message = ImapMessage(content=body)
-                        #print(body)
+                        logging.info("Message body read: {}".format(imap_message.content))
                     elif "attachment" in content_disposition:
                         # download attachment
                         filename = part.get_filename()
@@ -96,6 +101,7 @@ def imap_poll():
                 if content_type == "text/plain":
                     # print only text email parts
                     imap_message = ImapMessage(content=body)
+                    logging.info("#{} Message body read: {}".format(i, imap_message.content))
             if content_type == "text/html":
                 # if it's HTML, create a new HTML file and open it in browser
                 folder_name = clean(subject)
@@ -120,7 +126,4 @@ if __name__ == '__main__':
     #rt = RepeatedTimer(5, imap_poll)
     #rt.start()
     msgs = imap_poll()
-    print("len of set: {}".format(len(msgs)))
-    for msg in msgs:
-        print(msg.content)
     #client.executor.start_polling(client.dp, skip_updates=True)
