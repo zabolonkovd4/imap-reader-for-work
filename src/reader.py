@@ -2,23 +2,41 @@ import email
 import imaplib
 import logging
 import os
-import asyncio
+import argparse
+import configparser
 import webbrowser
 from email.header import decode_header
 from imap_message import ImapMessage
 from collections import OrderedDict
 
-# logger
+
+# Initialize command arguments
+p = argparse.ArgumentParser()
+# TODO: change default filepath with cmake integration
+p.add_argument('-f', default='../etc/settings.cfg', type=str, dest='config_file',
+               help='file of configuration', required=False)
+
+# Parse command arguments
+args = p.parse_args()
+
+# Read file of configuration
+config = configparser.ConfigParser()
+config.read(args.config_file)
+logging_level = config.get('reader', 'logging_level')
+imap_username = config.get('reader', 'imap_username')
+imap_password = config.get('reader', 'imap_password')
+imap_server = config.get('reader', 'imap_server')
+last_messages_count = config.getint('reader', 'last_messages_count')
+api_token = config.get('client', 'api_token')
+proxy_url = config.get('client', 'proxy_url')
+proxy_login = config.get('client', 'proxy_login')
+proxy_password = config.get('client', 'proxy_password')
+
+# Logger
 logging.basicConfig(
     format='%(asctime)s %(levelname)s [%(name)s(%(filename)s:%(lineno)d)] %(message)s',
-    level=logging.DEBUG
+    level=logging_level
 )
-
-# creds
-USERNAME = 'zabolonkovd4@ptri.unn.ru'
-PASSWORD = 'Qua*pAD_Scoob'
-IMAP_SERVER = 'ptri.unn.ru'
-N = 5
 
 
 def imap_auth(imap_server: str, username: str, password: str) -> imaplib.IMAP4_SSL:
@@ -40,12 +58,12 @@ def clean(text):
 
 
 def imap_poll():
-    imap = imap_auth(IMAP_SERVER, USERNAME, PASSWORD)
+    imap = imap_auth(imap_server, imap_username, imap_password)
     messages = imap_get_messages(imap)
     # imap message container
     msgs = OrderedDict()
     # iterate over last N message
-    for i in range(messages, messages - N, -1):
+    for i in range(messages, messages - last_messages_count, -1):
         res, msg = imap.fetch(str(i), "(RFC822)")
         for response in msg:
             if isinstance(response, tuple):
@@ -59,8 +77,6 @@ def imap_poll():
             From, encoding = decode_header(msg.get("From"))[0]
             if isinstance(From, bytes):
                 From = From.decode(encoding)
-            #print("Subject:", subject)
-            #print("From:", From)
             # if the email message is multipart
             if msg.is_multipart():
                 # iterate over email parts
@@ -117,14 +133,6 @@ def imap_poll():
                 webbrowser.open(filepath)
                 imap_message = ImapMessage(content=body)
                 # TODO: send a file via bot, then delete from os
-                #await client.send_message()
             msgs[imap_message] = None
             print("=" * 100)
     return msgs
-
-
-if __name__ == '__main__':
-    #rt = RepeatedTimer(5, imap_poll)
-    #rt.start()
-    msgs = imap_poll()
-    #client.executor.start_polling(client.dp, skip_updates=True)
