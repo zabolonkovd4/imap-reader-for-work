@@ -6,6 +6,7 @@ import asyncio
 import webbrowser
 from email.header import decode_header
 from imap_message import ImapMessage
+from collections import OrderedDict
 
 # logger
 logging.basicConfig(
@@ -42,7 +43,7 @@ def imap_poll():
     imap = imap_auth(IMAP_SERVER, USERNAME, PASSWORD)
     messages = imap_get_messages(imap)
     # imap message container
-    msgs = set()
+    msgs = OrderedDict()
     # iterate over last N message
     for i in range(messages, messages - N, -1):
         res, msg = imap.fetch(str(i), "(RFC822)")
@@ -117,7 +118,7 @@ def imap_poll():
                 imap_message = ImapMessage(content=body)
                 # TODO: send a file via bot, then delete from os
                 #await client.send_message()
-            msgs.add(imap_message)
+            msgs[imap_message] = None
             print("=" * 100)
     return msgs
 
