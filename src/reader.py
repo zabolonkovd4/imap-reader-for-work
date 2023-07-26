@@ -6,27 +6,25 @@ import asyncio
 import webbrowser
 from email.header import decode_header
 from imap_message import ImapMessage
-from collections import OrderedDict
-#import client
 
 # creds
-username = 'zabolonkovd4@ptri.unn.ru'
-password = 'Qua*pAD_Scoob'
-imap_server = 'ptri.unn.ru'
-
-# creating imap4 class with ssl
-imap = imaplib.IMAP4_SSL(imap_server)
-
-# auth
-imap.login(username, password)
-
-status, message = imap.select("INBOX")
-
-# imap message container
-msgs = set()
-
+USERNAME = 'zabolonkovd4@ptri.unn.ru'
+PASSWORD = 'Qua*pAD_Scoob'
+IMAP_SERVER = 'ptri.unn.ru'
 N = 5
-messages = int(message[0])
+
+
+def imap_auth(imap_server: str, username: str, password: str) -> imaplib.IMAP4_SSL:
+    # creating imap4 class with ssl
+    imap = imaplib.IMAP4_SSL(imap_server)
+    # auth
+    imap.login(username, password)
+    return imap
+
+
+def imap_get_messages(imap: imaplib.IMAP4_SSL) -> int:
+    status, message = imap.select("INBOX")
+    return int(message[0])
 
 
 def clean(text):
@@ -35,9 +33,11 @@ def clean(text):
 
 
 def imap_poll():
+    imap = imap_auth(IMAP_SERVER, USERNAME, PASSWORD)
+    messages = imap_get_messages(imap)
+    # imap message container
+    msgs = set()
     # iterate over last N message
-    print(messages)
-    print(messages - N)
     for i in range(messages, messages - N, -1):
         res, msg = imap.fetch(str(i), "(RFC822)")
         for response in msg:
@@ -123,9 +123,8 @@ def imap_poll():
 if __name__ == '__main__':
     #rt = RepeatedTimer(5, imap_poll)
     #rt.start()
-    messages = imap_poll()
-    print("len of set: {}".format(len(messages)))
-    for msg in messages:
+    msgs = imap_poll()
+    print("len of set: {}".format(len(msgs)))
+    for msg in msgs:
         print(msg.content)
     #client.executor.start_polling(client.dp, skip_updates=True)
-
