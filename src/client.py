@@ -20,8 +20,11 @@ logging.basicConfig(level=logging.INFO)
 async def send_welcome(message: types.Message):
     await message.reply("Hello, I am nifti task notifier", reply_markup=request_msgs_kb)
 
-@dp.message_handler(commands=['clear', 'c']):
+
+@dp.message_handler(commands=['clear', 'c'])
 async def clear_chat():
+    pass
+
 
 @dp.message_handler(commands=['tasks', 't'])
 async def send_message(message: types.Message):

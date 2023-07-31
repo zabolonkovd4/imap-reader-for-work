@@ -8,29 +8,30 @@ import webbrowser
 from email.header import decode_header
 from imap_message import ImapMessage
 from collections import OrderedDict
+from dotenv import dotenv_values
 
 
 # Initialize command arguments
 p = argparse.ArgumentParser()
 # TODO: change default filepath with cmake integration
-p.add_argument('-f', default='../etc/settings.cfg', type=str, dest='config_file',
+p.add_argument('-f', default='../etc/.env', type=str, dest='config_file',
                help='file of configuration', required=False)
 
 # Parse command arguments
 args = p.parse_args()
 
 # Read file of configuration
-config = configparser.ConfigParser()
-config.read(args.config_file)
-logging_level = config.get('reader', 'logging_level')
-imap_username = config.get('reader', 'imap_username')
-imap_password = config.get('reader', 'imap_password')
-imap_server = config.get('reader', 'imap_server')
-last_messages_count = config.getint('reader', 'last_messages_count')
-api_token = config.get('client', 'api_token')
-proxy_url = config.get('client', 'proxy_url')
-proxy_login = config.get('client', 'proxy_login')
-proxy_password = config.get('client', 'proxy_password')
+config = dotenv_values(args.config_file)
+
+logging_level = config['logging_level']
+imap_username = config['imap_username']
+imap_password = config['imap_password']
+imap_server = config['imap_server']
+last_messages_count = config['last_messages_count']
+api_token = config['api_token']
+proxy_url = config['proxy_url']
+proxy_login = config['proxy_login']
+proxy_password = config['proxy_password']
 
 # Logger
 logging.basicConfig(
