@@ -2,41 +2,19 @@ import email
 import imaplib
 import logging
 import os
-import argparse
-import configparser
 import webbrowser
 from email.header import decode_header
 from imap_message import ImapMessage
 from collections import OrderedDict
-from dotenv import dotenv_values
+from env_parser import EnvParser
 
+env = EnvParser()
 
-# Initialize command arguments
-p = argparse.ArgumentParser()
-# TODO: change default filepath with cmake integration
-p.add_argument('-f', default='../etc/.env', type=str, dest='config_file',
-               help='file of configuration', required=False)
-
-# Parse command arguments
-args = p.parse_args()
-
-# Read file of configuration
-config = dotenv_values(args.config_file)
-
-logging_level = config['logging_level']
-imap_username = config['imap_username']
-imap_password = config['imap_password']
-imap_server = config['imap_server']
-last_messages_count = config['last_messages_count']
-api_token = config['api_token']
-proxy_url = config['proxy_url']
-proxy_login = config['proxy_login']
-proxy_password = config['proxy_password']
 
 # Logger
 logging.basicConfig(
     format='%(asctime)s %(levelname)s [%(name)s(%(filename)s:%(lineno)d)] %(message)s',
-    level=logging_level
+    level=env.logging_level
 )
 
 
@@ -59,12 +37,12 @@ def clean(text):
 
 
 def imap_poll():
-    imap = imap_auth(imap_server, imap_username, imap_password)
+    imap = imap_auth(env.imap_server, env.imap_username, env.imap_password)
     messages = imap_get_messages(imap)
     # imap message container
     msgs = OrderedDict()
     # iterate over last N message
-    for i in range(messages, messages - last_messages_count, -1):
+    for i in range(messages, messages - env.last_messages_count, -1):
         res, msg = imap.fetch(str(i), "(RFC822)")
         for response in msg:
             if isinstance(response, tuple):

@@ -2,6 +2,8 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 
 request_btn = KeyboardButton('/tasks')
-request_msgs_kb = ReplyKeyboardMarkup(resize_keyboard=True).add(request_btn)
-clear_btn = KeyboardButton('/clear')
-clear_chat_btn = ReplyKeyboardMarkup(resize_keyboard=True).add(clear_btn)
+imap_btn = KeyboardButton('/settings')
+yes_btn = KeyboardButton('Yes')
+no_btn = KeyboardButton('No')
+rkm = ReplyKeyboardMarkup(resize_keyboard=True).add(request_btn).add(imap_btn)
+rkm_yes_no = ReplyKeyboardMarkup(resize_keyboard=True).add(yes_btn).add(no_btn)
